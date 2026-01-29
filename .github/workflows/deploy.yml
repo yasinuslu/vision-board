@@ -30,15 +30,8 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Build application
+      - name: Build application with Vite
         run: bun run build
-
-      - name: Copy images to dist
-        run: |
-          mkdir -p dist/images
-          cp -r src/images/* dist/images/ 2>/dev/null || true
-          mkdir -p dist/uploads
-          cp -r src/uploads/* dist/uploads/ 2>/dev/null || true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
