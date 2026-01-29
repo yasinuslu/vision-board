@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Storage Test</title>
+  </head>
+  <body>
+    <h1>Browser Storage Test</h1>
+    <div id="output"></div>
+    <button onclick="testIndexedDB()">Test IndexedDB</button>
+    <button onclick="testLocalStorage()">Test localStorage</button>
+
+    <script>
+      const output = document.getElementById("output");
+
+      async function testIndexedDB() {
+        output.innerHTML = "Testing IndexedDB...<br>";
+
+        try {
+          const request = indexedDB.open("visionboard-store", 1);
+
+          request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains("images")) {
+              db.createObjectStore("images", { keyPath: "id" });
+            }
+          };
+
+          request.onsuccess = async () => {
+            const db = request.result;
+
+            // Try to read all images
+            const transaction = db.transaction(["images"], "readonly");
+            const store = transaction.objectStore("images");
+            const getAll = store.getAllKeys();
+
+            getAll.onsuccess = () => {
+              output.innerHTML += `Success! IndexedDB works. Found ${getAll.result.length} images.<br>`;
+              output.innerHTML += `Images: ${JSON.stringify(getAll.result)}<br>`;
+            };
+
+            getAll.onerror = () => {
+              output.innerHTML += `Error reading from IndexedDB: ${getAll.error}<br>`;
+            };
+          };
+
+          request.onerror = () => {
+            output.innerHTML += `Error opening IndexedDB: ${request.error}<br>`;
+          };
+        } catch (error) {
+          output.innerHTML += `Exception: ${error.message}<br>`;
+        }
+      }
+
+      function testLocalStorage() {
+        output.innerHTML += "Testing localStorage...<br>";
+
+        try {
+          localStorage.setItem("test-key", "test-value");
+          const value = localStorage.getItem("test-key");
+          output.innerHTML += `Success! localStorage works. Value: ${value}<br>`;
+          localStorage.removeItem("test-key");
+        } catch (error) {
+          output.innerHTML += `Error with localStorage: ${error.message}<br>`;
+        }
+      }
+    </script>
+  </body>
+</html>
