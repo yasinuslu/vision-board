@@ -11,19 +11,9 @@ import { App } from "./App";
 import "./index.css";
 
 const elem = document.getElementById("root")!;
-const app = (
+
+createRoot(elem).render(
   <StrictMode>
     <App />
   </StrictMode>
 );
-
-// In production, import.meta.hot is undefined
-// In development with Vite HMR, it exists
-if (typeof import.meta.hot !== 'undefined') {
-  // With hot module reloading, `import.meta.hot.data` is persisted.
-  const root = (import.meta.hot.data.root ??= createRoot(elem));
-  root.render(app);
-} else {
-  // The hot module reloading API is not available in production.
-  createRoot(elem).render(app);
-}
