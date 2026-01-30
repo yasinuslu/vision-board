@@ -47,7 +47,7 @@ function restoreHudElements(elements: Container[]): void {
  */
 export async function exportCanvasAsImage(
   app: Application | null,
-  filename: string = 'vision-board.png',
+  filename: string = 'vision-board.jpg',
 ): Promise<void> {
   if (!app) {
     console.error('Application instance is null');
@@ -98,7 +98,7 @@ export async function exportCanvasAsImage(
       target: renderTexture,
     }) as HTMLCanvasElement;
 
-    // Convert to blob and download
+    // Convert to blob and download (JPEG for much smaller file size)
     canvas.toBlob(
       (blob) => {
         if (!blob) {
@@ -112,8 +112,8 @@ export async function exportCanvasAsImage(
         a.click();
         setTimeout(() => URL.revokeObjectURL(url), 100);
       },
-      'image/png',
-      1.0
+      'image/jpeg',
+      0.92 // High quality JPEG - good balance of quality and size
     );
 
     // Clean up the render texture

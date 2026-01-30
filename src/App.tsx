@@ -33,6 +33,8 @@ export function App() {
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [copiedEffects, setCopiedEffects] = useState<CopiedEffects>(null);
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportProgress, setExportProgress] = useState(0);
   const visionBoardRef = useRef<VisionBoardHandle>(null);
 
   // Get available positions (not yet used by any slot)
@@ -51,12 +53,37 @@ export function App() {
     [config.dreams],
   );
 
-  // Download handler - exports canvas as image
+  // Download handler - exports canvas as image with progress
   const handleDownloadRequest = useCallback(async () => {
+    // Show progress UI immediately
+    setIsExporting(true);
+    setExportProgress(0);
+    
+    // Wait for UI to render before starting heavy work
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    // Animate progress (fake progress since we can't get real progress from canvas.toBlob)
+    const progressInterval = setInterval(() => {
+      setExportProgress(prev => {
+        // Slow down as we approach 90% (leave room for actual completion)
+        if (prev < 30) return prev + 8;
+        if (prev < 60) return prev + 4;
+        if (prev < 85) return prev + 2;
+        return prev + 0.5;
+      });
+    }, 100);
+    
     try {
       await visionBoardRef.current?.download();
+      // Jump to 100% on success
+      setExportProgress(100);
+      await new Promise(resolve => setTimeout(resolve, 300)); // Brief pause to show 100%
     } catch (error) {
       console.error('Download failed:', error);
+    } finally {
+      clearInterval(progressInterval);
+      setIsExporting(false);
+      setExportProgress(0);
     }
   }, []);
 
@@ -512,6 +539,36 @@ export function App() {
         onSlotClick={handleSlotClick}
         onImageDrop={handleImageDrop}
       />
+      
+      {/* Export Progress Overlay */}
+      {isExporting && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+          <div className="bg-card border border-border rounded-lg p-6 w-80 shadow-2xl">
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-12 h-12 border-3 border-primary border-t-transparent rounded-full animate-spin" />
+              <div className="text-center">
+                <h3 className="text-lg font-semibold text-foreground mb-1">
+                  Exporting Vision Board
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Creating high-resolution image...
+                </p>
+              </div>
+              <div className="w-full">
+                <div className="h-2 bg-muted rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-primary transition-all duration-100 ease-out rounded-full"
+                    style={{ width: `${Math.min(exportProgress, 100)}%` }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground text-center mt-2">
+                  {Math.round(exportProgress)}%
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
