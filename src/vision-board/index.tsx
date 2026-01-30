@@ -13,6 +13,8 @@ export interface VisionBoardProps {
   selectedSlot: string | null;
   onSlotClick: (slotId: string) => void;
   onImageDrop: (slotId: string, filename: string) => void;
+  onPrintRequest?: CanvasExportFn;
+  onMount?: (app: Application) => void;
 }
 
 // Main VisionBoard component
@@ -67,6 +69,7 @@ export function VisionBoard({
               config={config}
               selectedSlot={selectedSlot}
               onSlotClick={onSlotClick}
+              onPrintRequest={onPrintRequest}
             />
           </Application>
         </div>

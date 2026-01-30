@@ -14,6 +14,7 @@ import {
   Upload,
   Trash2,
   Image as ImageIcon,
+  Printer,
   ChevronDown,
   ChevronUp,
   RotateCcw,
@@ -53,6 +54,7 @@ interface SidebarProps {
   onAddSlot: (positionIndex: number) => void;
   onRemoveSlot: (positionIndex: number) => void;
   onSlotClick: (slotId: string) => void;
+  onPrintRequest: () => void;
 }
 
 // Position names for better UX
@@ -822,6 +824,17 @@ export function Sidebar({
         <span>
           <kbd className="px-1 py-0.5 bg-muted rounded text-[9px]">⌘V</kbd>{" "}
           paste
+        </span>
+        <span className="ml-auto">
+          <Button
+            variant="secondary"
+            size="sm"
+            className="h-8 text-[10px] px-2"
+            onClick={() => onPrintRequest()}
+          >
+            <Printer className="h-4 w-4 mr-2" />
+            Print
+          </Button>
         </span>
       </div>
 

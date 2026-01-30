@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { VisionBoard } from "./VisionBoard";
 import { Sidebar } from "./Sidebar";
-import type { SlotConfig, Config, EffectPreset } from "./types";
+import type { SlotConfig, Config, EffectPreset, CanvasExportFn } from "./types";
 import {
   DEFAULT_SLOT_CONFIG,
   resetEffects,
@@ -48,6 +48,16 @@ export function App() {
     },
     [config.dreams],
   );
+
+  // Print handler
+  const handlePrintRequest = useCallback(async () => {
+    try {
+      // Will be called from VisionBoard when print button clicked
+      console.log('Print requested');
+    } catch (error) {
+      console.error('Print failed:', error);
+    }
+  }, []);
 
   // Debounced save function (300ms delay) - saves to localStorage
   const saveConfigToServer = useCallback((configToSave: Config) => {
@@ -494,6 +504,7 @@ export function App() {
         selectedSlot={selectedSlot}
         onSlotClick={handleSlotClick}
         onImageDrop={handleImageDrop}
+        onPrintRequest={handlePrintRequest}
       />
     </div>
   );
