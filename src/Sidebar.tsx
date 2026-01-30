@@ -26,6 +26,7 @@ import {
   Palette,
   Plus,
   X,
+  FolderOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { SlotConfig, Config, EffectPreset } from "./types";
@@ -55,6 +56,7 @@ interface SidebarProps {
   onRemoveSlot: (positionIndex: number) => void;
   onSlotClick: (slotId: string) => void;
   onPrintRequest: () => void;
+  onOpenMediaLibrary: () => void;
 }
 
 // Position names for better UX
@@ -678,6 +680,7 @@ export function Sidebar({
   onRemoveSlot,
   onSlotClick,
   onPrintRequest,
+  onOpenMediaLibrary,
 }: SidebarProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -753,11 +756,11 @@ export function Sidebar({
     <div className="w-80 h-screen bg-card border-r border-border flex flex-col overflow-hidden">
       {/* Upload Zone - Collapsible */}
       <div className="border-b border-border">
-        <div
-          className="flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-muted/30 transition-colors"
-          onClick={() => setUploadExpanded(!uploadExpanded)}
-        >
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between px-3 py-2">
+          <div
+            className="flex items-center gap-2 flex-1 cursor-pointer hover:bg-muted/30 transition-colors rounded -ml-1 pl-1 py-0.5"
+            onClick={() => setUploadExpanded(!uploadExpanded)}
+          >
             <Upload className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm font-medium">Images</span>
             {images.length > 0 && (
@@ -765,11 +768,25 @@ export function Sidebar({
                 {images.length}
               </Badge>
             )}
+            {uploadExpanded ? (
+              <ChevronUp className="h-4 w-4 text-muted-foreground ml-auto" />
+            ) : (
+              <ChevronDown className="h-4 w-4 text-muted-foreground ml-auto" />
+            )}
           </div>
-          {uploadExpanded ? (
-            <ChevronUp className="h-4 w-4 text-muted-foreground" />
-          ) : (
-            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          {images.length > 0 && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 ml-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenMediaLibrary();
+              }}
+              title="Manage Library"
+            >
+              <FolderOpen className="h-4 w-4" />
+            </Button>
           )}
         </div>
         {uploadExpanded && (

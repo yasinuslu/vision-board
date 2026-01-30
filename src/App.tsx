@@ -19,6 +19,7 @@ import {
   deleteImage as deleteImageFromStorage,
   saveImage as saveImageToStorage,
 } from "./lib/browserStorage";
+import { MediaLibraryModal } from "./MediaLibraryModal";
 import "./index.css";
 
 // Type for copied effects (effects without image and positionIndex)
@@ -35,6 +36,7 @@ export function App() {
   const [copiedEffects, setCopiedEffects] = useState<CopiedEffects>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [exportProgress, setExportProgress] = useState(0);
+  const [mediaLibraryOpen, setMediaLibraryOpen] = useState(false);
   const visionBoardRef = useRef<VisionBoardHandle>(null);
 
   // Get available positions (not yet used by any slot)
@@ -531,6 +533,7 @@ export function App() {
         onRemoveSlot={handleRemoveSlot}
         onSlotClick={(slotId: string) => setSelectedSlot(slotId || null)}
         onPrintRequest={handleDownloadRequest}
+        onOpenMediaLibrary={() => setMediaLibraryOpen(true)}
       />
       <VisionBoard
         ref={visionBoardRef}
@@ -540,6 +543,15 @@ export function App() {
         onImageDrop={handleImageDrop}
       />
       
+      {/* Media Library Modal */}
+      <MediaLibraryModal
+        open={mediaLibraryOpen}
+        onOpenChange={setMediaLibraryOpen}
+        images={images}
+        config={config}
+        onDelete={handleImageDelete}
+      />
+
       {/* Export Progress Overlay */}
       {isExporting && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
