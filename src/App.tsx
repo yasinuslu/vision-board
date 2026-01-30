@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { VisionBoard } from "./VisionBoard";
+import type { VisionBoardHandle } from "./vision-board";
 import { Sidebar } from "./Sidebar";
-import type { SlotConfig, Config, EffectPreset, CanvasExportFn } from "./types";
+import type { SlotConfig, Config, EffectPreset } from "./types";
 import {
   DEFAULT_SLOT_CONFIG,
   resetEffects,
@@ -32,6 +33,7 @@ export function App() {
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [copiedEffects, setCopiedEffects] = useState<CopiedEffects>(null);
+  const visionBoardRef = useRef<VisionBoardHandle>(null);
 
   // Get available positions (not yet used by any slot)
   const getAvailablePositions = useCallback((): number[] => {
@@ -49,13 +51,12 @@ export function App() {
     [config.dreams],
   );
 
-  // Print handler
-  const handlePrintRequest = useCallback(async () => {
+  // Download handler - exports canvas as image
+  const handleDownloadRequest = useCallback(async () => {
     try {
-      // Will be called from VisionBoard when print button clicked
-      console.log('Print requested');
+      await visionBoardRef.current?.download();
     } catch (error) {
-      console.error('Print failed:', error);
+      console.error('Download failed:', error);
     }
   }, []);
 
@@ -137,6 +138,10 @@ export function App() {
         if (savedConfig) {
           // Ensure all slots have all properties
           const migratedConfig = migrateConfigWithDefaults(savedConfig);
+          setConfig(migratedConfig);
+        } else {
+          // Ensure initial config has all properties
+          const migratedConfig = migrateConfigWithDefaults(config);
           setConfig(migratedConfig);
         }
       } catch (error) {
@@ -498,13 +503,14 @@ export function App() {
         onAddSlot={handleAddSlot}
         onRemoveSlot={handleRemoveSlot}
         onSlotClick={(slotId: string) => setSelectedSlot(slotId || null)}
+        onPrintRequest={handleDownloadRequest}
       />
       <VisionBoard
+        ref={visionBoardRef}
         config={config}
         selectedSlot={selectedSlot}
         onSlotClick={handleSlotClick}
         onImageDrop={handleImageDrop}
-        onPrintRequest={handlePrintRequest}
       />
     </div>
   );

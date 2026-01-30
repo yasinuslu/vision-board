@@ -1,20 +1,26 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import path from 'path'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
+
+// Check if we're in production (deployed to GitHub Pages)
+const isProduction = process.env.NODE_ENV === "production";
 
 export default defineConfig({
   plugins: [react()],
-  base: '/vision-board/',
+  // Only use base path in production (GitHub Pages)
+  // In development, use relative paths
+  base: isProduction ? "/vision-board/" : "/",
   server: {
-    port: 3000,
+    // Explicitly set host for development
+    host: isProduction ? false : "localhost",
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      "@": path.resolve(__dirname, "./src"),
     },
   },
   build: {
-    outDir: 'dist',
+    outDir: "dist",
     sourcemap: true,
   },
-})
+});

@@ -130,6 +130,3 @@ export const EFFECT_PRESETS: EffectPreset[] = [
     effects: { size: 1.3, glowIntensity: 0.5, contrast: 1.1 },
   },
 ];
-
-// Canvas export function type
-export type CanvasExportFn = (filename?: string) => Promise<void>;

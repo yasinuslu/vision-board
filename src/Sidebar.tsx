@@ -14,7 +14,7 @@ import {
   Upload,
   Trash2,
   Image as ImageIcon,
-  Printer,
+  Download,
   ChevronDown,
   ChevronUp,
   RotateCcw,
@@ -677,6 +677,7 @@ export function Sidebar({
   onAddSlot,
   onRemoveSlot,
   onSlotClick,
+  onPrintRequest,
 }: SidebarProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -832,8 +833,8 @@ export function Sidebar({
             className="h-8 text-[10px] px-2"
             onClick={() => onPrintRequest()}
           >
-            <Printer className="h-4 w-4 mr-2" />
-            Print
+            <Download className="h-4 w-4 mr-2" />
+            Download
           </Button>
         </span>
       </div>

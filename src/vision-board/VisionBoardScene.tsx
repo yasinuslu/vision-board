@@ -7,7 +7,6 @@ interface VisionBoardSceneProps {
   config: Config;
   selectedSlot: string | null;
   onSlotClick: (slotId: string) => void;
-  onPrintRequest?: () => void;
 }
 
 // Main scene component that renders inside the PixiJS Application
